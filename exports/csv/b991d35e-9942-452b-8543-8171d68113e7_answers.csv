@@ -1,0 +1,11 @@
+question_id,answer
+rdp_access,intentional
+bridge_network_isolation,yes
+shared_accounts,yes
+incident_response,yes
+edr_solution,yes
+vendor_access,yes
+vendor_mfa,yes
+vpn_usage,yes
+vpn_mfa,yes
+crew_personal_devices,yes
