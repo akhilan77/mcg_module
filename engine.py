@@ -55,6 +55,10 @@ def osint_relevant(question, state):
 # Generic scoring engine
 # ----------------------------------------
 
+# ----------------------------------------
+# Generic scoring engine
+# ----------------------------------------
+
 def score_question(question, state):
 
     score = question.get(
@@ -63,6 +67,16 @@ def score_question(question, state):
     )
 
     reasons = []
+
+    vessel = state.get(
+        "vessel_profile",
+        {}
+    )
+
+    tags = question.get(
+        "tags",
+        []
+    )
 
     # ----------------------------------------
     # Base priority
@@ -111,10 +125,7 @@ def score_question(question, state):
         []
     ):
 
-        # ----------------------------------------
         # Flag boosts
-        # ----------------------------------------
-
         if (
             "if_flag" in mod
             and mod["if_flag"]
@@ -127,10 +138,7 @@ def score_question(question, state):
                 f"Flag '{mod['if_flag']}' matched: +{mod['boost']}"
             )
 
-        # ----------------------------------------
         # OSINT boosts
-        # ----------------------------------------
-
         if (
             "if_osint" in mod
             and state["osint"].get(
@@ -149,11 +157,6 @@ def score_question(question, state):
     # ----------------------------------------
 
     role = state.get("role")
-
-    tags = question.get(
-        "tags",
-        []
-    )
 
     if role == "eto":
 
@@ -203,6 +206,126 @@ def score_question(question, state):
                     f"Captain operational relevance ({tag}): +10"
                 )
 
+    # ========================================
+    # IMO / Vessel-Aware Intelligence
+    # ========================================
+
+    # ----------------------------------------
+    # Large yacht complexity
+    # ----------------------------------------
+
+    loa = vessel.get(
+        "loa",
+        0
+    )
+
+    if loa >= 80:
+
+        large_yacht_tags = [
+
+            "vendor",
+
+            "segmentation",
+
+            "remote_access",
+
+            "monitoring"
+        ]
+
+        for tag in large_yacht_tags:
+
+            if tag in tags:
+
+                score += 25
+
+                reasons.append(
+                    f"Large yacht complexity ({tag}): +25"
+                )
+
+    # ----------------------------------------
+    # Charter yacht guest exposure
+    # ----------------------------------------
+
+    if vessel.get(
+        "vessel_type"
+    ) == "charter_yacht":
+
+        charter_tags = [
+
+            "guest_wifi",
+
+            "vendor",
+
+            "endpoint",
+
+            "remote_access"
+        ]
+
+        for tag in charter_tags:
+
+            if tag in tags:
+
+                score += 30
+
+                reasons.append(
+                    f"Charter yacht exposure ({tag}): +30"
+                )
+
+    # ----------------------------------------
+    # Older vessel risks
+    # ----------------------------------------
+
+    build_year = vessel.get(
+        "build_year",
+        9999
+    )
+
+    if build_year <= 2010:
+
+        legacy_tags = [
+
+            "patching",
+
+            "segmentation",
+
+            "endpoint"
+        ]
+
+        for tag in legacy_tags:
+
+            if tag in tags:
+
+                score += 20
+
+                reasons.append(
+                    f"Legacy vessel risk ({tag}): +20"
+                )
+
+    # ----------------------------------------
+    # Explorer yacht satcom dependency
+    # ----------------------------------------
+
+    if vessel.get(
+        "vessel_type"
+    ) == "explorer_yacht":
+
+        explorer_tags = [
+
+            "satcom",
+
+            "remote_access"
+        ]
+
+        for tag in explorer_tags:
+
+            if tag in tags:
+
+                score += 35
+
+                reasons.append(
+                    f"Explorer yacht satcom risk ({tag}): +35"
+                )
+
     # ----------------------------------------
     # Final result
     # ----------------------------------------
@@ -213,7 +336,6 @@ def score_question(question, state):
 
         "reasons": reasons
     }
-
 
 # ----------------------------------------
 # Get valid questions

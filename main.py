@@ -29,6 +29,10 @@ from explainability import (
     record_decision_trace
 )
 
+from imo_enrichment import (
+    enrich_vessel
+)
+
 from state import STATE
 
 
@@ -214,9 +218,92 @@ print(
     "\n=== Yacht Cyber Questionnaire ==="
 )
 
+# ----------------------------------------
+# IMO Input
+# ----------------------------------------
+
+imo = input(
+    "\nEnter IMO Number: "
+).strip()
+
+# ----------------------------------------
+# Vessel Enrichment
+# ----------------------------------------
+
+enriched = enrich_vessel(
+    imo
+)
+
+# ----------------------------------------
+# Store enrichment into STATE
+# ----------------------------------------
+
+STATE["imo"] = imo
+
+STATE["vessel_profile"] = (
+    enriched["vessel_profile"]
+)
+
+STATE["osint"] = (
+    enriched["osint"]
+)
+
+STATE["flags"].update(
+    enriched["flags"]
+)
+
+# ----------------------------------------
+# Show vessel context
+# ----------------------------------------
+
+print("\n=== Vessel Context ===")
+
+print(
+    f"IMO: {STATE['imo']}"
+)
+
+print(
+    f"Type: "
+    f"{STATE['vessel_profile']['vessel_type']}"
+)
+
+print(
+    f"LOA: "
+    f"{STATE['vessel_profile']['loa']}m"
+)
+
+print(
+    f"Build Year: "
+    f"{STATE['vessel_profile']['build_year']}"
+)
+
+print(
+    f"Flag State: "
+    f"{STATE['vessel_profile']['flag_state']}"
+)
+
+print(
+    f"Operator: "
+    f"{STATE['vessel_profile']['operator']}"
+)
+
+print("\n=== Pre-Seeded Flags ===")
+
+for flag in STATE["flags"]:
+
+    print(f"- {flag}")
+
+# ----------------------------------------
+# Assessment metadata
+# ----------------------------------------
+
 STATE["metadata"]["started"] = (
     datetime.utcnow().isoformat()
 )
+
+# ----------------------------------------
+# Questionnaire loop
+# ----------------------------------------
 
 while True:
 
@@ -326,7 +413,6 @@ STATE["metadata"]["completed"] = (
     datetime.utcnow().isoformat()
 )
 
-
 # ----------------------------------------
 # Final assessment
 # ----------------------------------------
@@ -334,7 +420,6 @@ STATE["metadata"]["completed"] = (
 assessment = finalize_assessment(
     STATE
 )
-
 
 # ----------------------------------------
 # Build export object
@@ -347,6 +432,12 @@ export_data = {
 
     "timestamp":
         datetime.utcnow().isoformat(),
+
+    "imo":
+        STATE["imo"],
+
+    "vessel_profile":
+        STATE["vessel_profile"],
 
     "metadata":
         STATE["metadata"],
@@ -388,7 +479,6 @@ export_data = {
         ]
 }
 
-
 # ----------------------------------------
 # Export files
 # ----------------------------------------
@@ -400,7 +490,6 @@ export_answers_csv(export_data)
 export_flags_csv(export_data)
 
 export_domains_csv(export_data)
-
 
 print(
     "\nAll exports completed successfully."
