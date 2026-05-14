@@ -40,5 +40,6 @@ STATE = {
         "started": None,
 
         "completed": None
-    }
+    },"decision_trace": []
+
 }

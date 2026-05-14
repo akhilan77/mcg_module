@@ -1,0 +1,317 @@
+{
+    "assessment_id": "8aebb61b-8d41-435f-a141-702534420679",
+    "timestamp": "2026-05-14T05:39:20.575578",
+    "metadata": {
+        "assessment_version": "1.0",
+        "assessment_type": "yacht_cybersecurity",
+        "started": "2026-05-14T05:38:27.749568",
+        "completed": "2026-05-14T05:39:20.575578"
+    },
+    "answers": {
+        "rdp_access": "temporary",
+        "bridge_network_isolation": "yes",
+        "shared_accounts": "yes",
+        "incident_response": "yes",
+        "edr_solution": "yes",
+        "vpn_usage": "yes",
+        "vpn_mfa": "yes",
+        "vendor_access": "no",
+        "crew_personal_devices": "no"
+    },
+    "flags": [
+        "credential_sharing"
+    ],
+    "covered_domains": [
+        "vendor",
+        "identity_access",
+        "remote_access",
+        "incident_response",
+        "endpoint_security",
+        "authentication",
+        "network_segmentation"
+    ],
+    "risk_scores": {
+        "remote_access": 115,
+        "network_segmentation": 75,
+        "identity_access": 60,
+        "incident_response": 65,
+        "endpoint_security": 90,
+        "authentication": 60,
+        "vendor": 30
+    },
+    "question_history": [
+        {
+            "question_id": "rdp_access",
+            "question": "Why is RDP exposed publicly?",
+            "answer": "temporary",
+            "domain": "remote_access"
+        },
+        {
+            "question_id": "bridge_network_isolation",
+            "question": "Is the bridge/navigation network isolated from guest networks?",
+            "answer": "yes",
+            "domain": "network_segmentation"
+        },
+        {
+            "question_id": "shared_accounts",
+            "question": "Are shared administrator accounts used onboard?",
+            "answer": "yes",
+            "domain": "identity_access"
+        },
+        {
+            "question_id": "incident_response",
+            "question": "Is there a documented cyber incident response process onboard?",
+            "answer": "yes",
+            "domain": "incident_response"
+        },
+        {
+            "question_id": "edr_solution",
+            "question": "Is an EDR/XDR security solution deployed onboard?",
+            "answer": "yes",
+            "domain": "endpoint_security"
+        },
+        {
+            "question_id": "vpn_usage",
+            "question": "Is VPN used for remote yacht access?",
+            "answer": "yes",
+            "domain": "remote_access"
+        },
+        {
+            "question_id": "vpn_mfa",
+            "question": "Is MFA enforced on VPN access?",
+            "answer": "yes",
+            "domain": "authentication"
+        },
+        {
+            "question_id": "vendor_access",
+            "question": "Do vendors remotely access yacht systems?",
+            "answer": "no",
+            "domain": "vendor"
+        },
+        {
+            "question_id": "crew_personal_devices",
+            "question": "Are crew personal devices allowed on internal yacht networks?",
+            "answer": "no",
+            "domain": "endpoint_security"
+        }
+    ],
+    "decision_trace": [
+        {
+            "question_id": "rdp_access",
+            "question": "Why is RDP exposed publicly?",
+            "score": 155,
+            "reasons": [
+                "Base priority: +70",
+                "Uncovered domain: +20",
+                "Information gain: +35",
+                "ETO technical relevance (remote_access): +15",
+                "ETO technical relevance (rdp): +15"
+            ],
+            "active_flags": [],
+            "covered_domains": [],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "bridge_network_isolation",
+            "question": "Is the bridge/navigation network isolated from guest networks?",
+            "score": 150,
+            "reasons": [
+                "Base priority: +75",
+                "Uncovered domain: +20",
+                "Information gain: +40",
+                "ETO technical relevance (segmentation): +15"
+            ],
+            "active_flags": [],
+            "covered_domains": [
+                "remote_access"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "shared_accounts",
+            "question": "Are shared administrator accounts used onboard?",
+            "score": 120,
+            "reasons": [
+                "Base priority: +60",
+                "Uncovered domain: +20",
+                "Information gain: +25",
+                "ETO technical relevance (credentials): +15"
+            ],
+            "active_flags": [],
+            "covered_domains": [
+                "remote_access",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "incident_response",
+            "question": "Is there a documented cyber incident response process onboard?",
+            "score": 105,
+            "reasons": [
+                "Base priority: +65",
+                "Uncovered domain: +20",
+                "Information gain: +20"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "remote_access",
+                "identity_access",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "edr_solution",
+            "question": "Is an EDR/XDR security solution deployed onboard?",
+            "score": 105,
+            "reasons": [
+                "Base priority: +50",
+                "Uncovered domain: +20",
+                "Information gain: +20",
+                "ETO technical relevance (endpoint): +15"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "incident_response",
+                "remote_access",
+                "identity_access",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "vpn_usage",
+            "question": "Is VPN used for remote yacht access?",
+            "score": 95,
+            "reasons": [
+                "Base priority: +45",
+                "Information gain: +20",
+                "ETO technical relevance (remote_access): +15",
+                "ETO technical relevance (vpn): +15"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "identity_access",
+                "remote_access",
+                "incident_response",
+                "endpoint_security",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "vpn_mfa",
+            "question": "Is MFA enforced on VPN access?",
+            "score": 145,
+            "reasons": [
+                "Base priority: +60",
+                "Uncovered domain: +20",
+                "Information gain: +35",
+                "ETO technical relevance (authentication): +15",
+                "ETO technical relevance (vpn): +15"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "identity_access",
+                "remote_access",
+                "incident_response",
+                "endpoint_security",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "vendor_access",
+            "question": "Do vendors remotely access yacht systems?",
+            "score": 85,
+            "reasons": [
+                "Base priority: +30",
+                "Uncovered domain: +20",
+                "Information gain: +20",
+                "ETO technical relevance (remote_access): +15"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "identity_access",
+                "remote_access",
+                "incident_response",
+                "endpoint_security",
+                "authentication",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        },
+        {
+            "question_id": "crew_personal_devices",
+            "question": "Are crew personal devices allowed on internal yacht networks?",
+            "score": 70,
+            "reasons": [
+                "Base priority: +40",
+                "Information gain: +15",
+                "ETO technical relevance (endpoint): +15"
+            ],
+            "active_flags": [
+                "credential_sharing"
+            ],
+            "covered_domains": [
+                "vendor",
+                "identity_access",
+                "remote_access",
+                "incident_response",
+                "endpoint_security",
+                "authentication",
+                "network_segmentation"
+            ],
+            "osint": {
+                "rdp_exposed": true,
+                "teamviewer_detected": true,
+                "fortinet_detected": true
+            }
+        }
+    ],
+    "correlations": [],
+    "total_flags": 1
+}

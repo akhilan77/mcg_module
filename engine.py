@@ -62,8 +62,18 @@ def score_question(question, state):
         0
     )
 
+    reasons = []
+
     # ----------------------------------------
-    # Missing coverage boost
+    # Base priority
+    # ----------------------------------------
+
+    reasons.append(
+        f"Base priority: +{score}"
+    )
+
+    # ----------------------------------------
+    # Missing domain coverage
     # ----------------------------------------
 
     if (
@@ -73,13 +83,23 @@ def score_question(question, state):
 
         score += 20
 
+        reasons.append(
+            "Uncovered domain: +20"
+        )
+
     # ----------------------------------------
     # Information gain
     # ----------------------------------------
 
-    score += question.get(
+    ig = question.get(
         "information_gain",
         0
+    )
+
+    score += ig
+
+    reasons.append(
+        f"Information gain: +{ig}"
     )
 
     # ----------------------------------------
@@ -91,7 +111,10 @@ def score_question(question, state):
         []
     ):
 
-        # flag-based boosts
+        # ----------------------------------------
+        # Flag boosts
+        # ----------------------------------------
+
         if (
             "if_flag" in mod
             and mod["if_flag"]
@@ -100,7 +123,14 @@ def score_question(question, state):
 
             score += mod["boost"]
 
-        # osint-based boosts
+            reasons.append(
+                f"Flag '{mod['if_flag']}' matched: +{mod['boost']}"
+            )
+
+        # ----------------------------------------
+        # OSINT boosts
+        # ----------------------------------------
+
         if (
             "if_osint" in mod
             and state["osint"].get(
@@ -110,29 +140,79 @@ def score_question(question, state):
 
             score += mod["boost"]
 
+            reasons.append(
+                f"OSINT '{mod['if_osint']}' matched: +{mod['boost']}"
+            )
+
     # ----------------------------------------
     # Role relevance
     # ----------------------------------------
 
     role = state.get("role")
 
-    tags = question.get("tags", [])
+    tags = question.get(
+        "tags",
+        []
+    )
 
     if role == "eto":
 
         technical_tags = [
+
             "remote_access",
+
             "authentication",
+
             "rdp",
-            "credentials"
+
+            "credentials",
+
+            "vpn",
+
+            "segmentation",
+
+            "endpoint"
         ]
 
         for tag in technical_tags:
 
             if tag in tags:
+
                 score += 15
 
-    return score
+                reasons.append(
+                    f"ETO technical relevance ({tag}): +15"
+                )
+
+    elif role == "captain":
+
+        operational_tags = [
+
+            "vendor",
+
+            "incident_response"
+        ]
+
+        for tag in operational_tags:
+
+            if tag in tags:
+
+                score += 10
+
+                reasons.append(
+                    f"Captain operational relevance ({tag}): +10"
+                )
+
+    # ----------------------------------------
+    # Final result
+    # ----------------------------------------
+
+    return {
+
+        "score": score,
+
+        "reasons": reasons
+    }
 
 
 # ----------------------------------------
@@ -145,7 +225,10 @@ def get_valid_questions(state):
 
     for question in QUESTIONS:
 
-        # already answered
+        # ----------------------------------------
+        # Already answered
+        # ----------------------------------------
+
         if (
             question["id"]
             in state["answers"]
@@ -153,7 +236,10 @@ def get_valid_questions(state):
 
             continue
 
-        # conditions
+        # ----------------------------------------
+        # Conditions
+        # ----------------------------------------
+
         if not evaluate_conditions(
             question,
             state
@@ -161,7 +247,10 @@ def get_valid_questions(state):
 
             continue
 
-        # osint
+        # ----------------------------------------
+        # OSINT filtering
+        # ----------------------------------------
+
         if not osint_relevant(
             question,
             state
@@ -194,7 +283,7 @@ def rank_questions(state):
             score_question(
                 q,
                 state
-            ),
+            )["score"],
 
         reverse=True
     )
@@ -263,12 +352,18 @@ def update_coverage(
         domain
     )
 
-    # initialize score
+    # ----------------------------------------
+    # Initialize score
+    # ----------------------------------------
+
     if domain not in state["scores"]:
 
         state["scores"][domain] = 0
 
-    # accumulate weighted score
+    # ----------------------------------------
+    # Accumulate weighted score
+    # ----------------------------------------
+
     state["scores"][domain] += question.get(
         "base_weight",
         0
@@ -402,6 +497,9 @@ def finalize_assessment(state):
         "correlations":
             correlations,
 
+        "decision_trace":
+            state["decision_trace"],
+
         "total_flags":
             len(state["flags"])
     }
@@ -455,5 +553,13 @@ def print_state(state):
             f'{q["question_id"]} '
             f'-> {q["answer"]}'
         )
+
+    print("\nDecision Trace Count:")
+
+    print(
+        len(
+            state["decision_trace"]
+        )
+    )
 
     print("\n===========================")

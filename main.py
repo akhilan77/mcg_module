@@ -22,6 +22,13 @@ from engine import (
     print_state
 )
 
+from explainability import (
+
+    explain_question,
+
+    record_decision_trace
+)
+
 from state import STATE
 
 
@@ -59,7 +66,10 @@ def export_json(assessment):
         filename
     )
 
-    with open(filepath, "w") as f:
+    with open(
+        filepath,
+        "w"
+    ) as f:
 
         json.dump(
             assessment,
@@ -210,9 +220,17 @@ STATE["metadata"]["started"] = (
 
 while True:
 
+    # ----------------------------------------
+    # Get next question
+    # ----------------------------------------
+
     question = get_next_question(
         STATE
     )
+
+    # ----------------------------------------
+    # Assessment complete
+    # ----------------------------------------
 
     if not question:
 
@@ -221,6 +239,29 @@ while True:
         )
 
         break
+
+    # ----------------------------------------
+    # Explain WHY selected
+    # ----------------------------------------
+
+    result = explain_question(
+        question,
+        STATE
+    )
+
+    # ----------------------------------------
+    # Record decision trace
+    # ----------------------------------------
+
+    record_decision_trace(
+        question,
+        STATE,
+        result
+    )
+
+    # ----------------------------------------
+    # Ask question
+    # ----------------------------------------
 
     print("\n" + question["text"])
 
@@ -329,6 +370,11 @@ export_data = {
     "question_history":
         assessment[
             "question_history"
+        ],
+
+    "decision_trace":
+        assessment[
+            "decision_trace"
         ],
 
     "correlations":

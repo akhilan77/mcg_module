@@ -1,0 +1,102 @@
+{
+    "assessment_id": "f5dafd72-e628-48b8-89dc-0006950d430b",
+    "timestamp": "2026-05-14T05:18:15.003767",
+    "metadata": {
+        "assessment_version": "1.0",
+        "assessment_type": "yacht_cybersecurity",
+        "started": "2026-05-14T05:17:30.621452",
+        "completed": "2026-05-14T05:18:15.003767"
+    },
+    "answers": {
+        "rdp_access": "temporary",
+        "bridge_network_isolation": "yes",
+        "shared_accounts": "yes",
+        "incident_response": "yes",
+        "edr_solution": "yes",
+        "vendor_access": "yes",
+        "vendor_mfa": "yes",
+        "vpn_usage": "no",
+        "crew_personal_devices": "no"
+    },
+    "flags": [
+        "no_secure_remote_access",
+        "credential_sharing",
+        "vendor_remote_access"
+    ],
+    "covered_domains": [
+        "remote_access",
+        "authentication",
+        "incident_response",
+        "vendor",
+        "network_segmentation",
+        "endpoint_security",
+        "identity_access"
+    ],
+    "risk_scores": {
+        "remote_access": 115,
+        "network_segmentation": 75,
+        "identity_access": 60,
+        "incident_response": 65,
+        "endpoint_security": 90,
+        "vendor": 30,
+        "authentication": 50
+    },
+    "question_history": [
+        {
+            "question_id": "rdp_access",
+            "question": "Why is RDP exposed publicly?",
+            "answer": "temporary",
+            "domain": "remote_access"
+        },
+        {
+            "question_id": "bridge_network_isolation",
+            "question": "Is the bridge/navigation network isolated from guest networks?",
+            "answer": "yes",
+            "domain": "network_segmentation"
+        },
+        {
+            "question_id": "shared_accounts",
+            "question": "Are shared administrator accounts used onboard?",
+            "answer": "yes",
+            "domain": "identity_access"
+        },
+        {
+            "question_id": "incident_response",
+            "question": "Is there a documented cyber incident response process onboard?",
+            "answer": "yes",
+            "domain": "incident_response"
+        },
+        {
+            "question_id": "edr_solution",
+            "question": "Is an EDR/XDR security solution deployed onboard?",
+            "answer": "yes",
+            "domain": "endpoint_security"
+        },
+        {
+            "question_id": "vendor_access",
+            "question": "Do vendors remotely access yacht systems?",
+            "answer": "yes",
+            "domain": "vendor"
+        },
+        {
+            "question_id": "vendor_mfa",
+            "question": "Do vendors use MFA for remote access?",
+            "answer": "yes",
+            "domain": "authentication"
+        },
+        {
+            "question_id": "vpn_usage",
+            "question": "Is VPN used for remote yacht access?",
+            "answer": "no",
+            "domain": "remote_access"
+        },
+        {
+            "question_id": "crew_personal_devices",
+            "question": "Are crew personal devices allowed on internal yacht networks?",
+            "answer": "no",
+            "domain": "endpoint_security"
+        }
+    ],
+    "correlations": [],
+    "total_flags": 3
+}
